@@ -10,7 +10,7 @@ function AdminDashboard() {
     const { user } = useAuth();
 
     useEffect(() => {
-        if (user?.isAdmin) {
+        if (!user?.isAdmin) {
             toast.error('Unauthorized access');
             return;
         }
@@ -19,8 +19,8 @@ function AdminDashboard() {
 
     const fetchData = async () => {
         try {
-            const ordersRes = await axios.get('http://localhost:3000/api/orders/all');
-            const bookingsRes = await axios.get('http://localhost:3000/api/bookings/all');
+            const ordersRes = await axios.get('http://localhost:3000/api/orders');
+            const bookingsRes = await axios.get('http://localhost:3000/api/bookings');
             setOrders(ordersRes.data);
             setBookings(bookingsRes.data);
         } catch (error) {

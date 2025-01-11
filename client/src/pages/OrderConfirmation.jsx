@@ -13,6 +13,7 @@ function OrderConfirmation() {
                 <p className="text-gray-600 mb-6">
                     Thank you for your order. We'll start preparing it right away!
                 </p>
+                <p className="bg-primary text-white px-6 py-2 rounded-md hover:bg-opacity-90" onClick={() => navigate('/')}>Go Home</p>
                 {/* <button
                     onClick={() => navigate('/my-orders')}
                     className="bg-primary text-white px-6 py-2 rounded-md hover:bg-opacity-90"
