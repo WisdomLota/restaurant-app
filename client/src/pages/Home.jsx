@@ -36,16 +36,8 @@ function Home() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="bg-primary p-4 flex justify-between items-center">
-          <h1 className="text-white text-xl font-bold">Restaurant Chatbot</h1>
-          {user && (
-            <button
-              onClick={() => navigate('/logout')}
-              className="text-white hover:text-gray-200"
-            >
-              Logout
-            </button>
-          )}
+        <div className="bg-orange-700 p-4 flex justify-between items-center">
+          <h1 className="text-orange-300 text-xl font-bold">Restaurant Chatbot</h1>
         </div>
 
         <div className="h-96 overflow-y-auto p-4 space-y-4">

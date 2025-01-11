@@ -4,8 +4,11 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/AdminDashboard';
+import OrderFood from './pages/OrderFood';
+import BookTable from './pages/BookTable';
 import { AuthProvider } from './context/AuthContext';
+import "./styles/index.css"
 
 function App() {
   return (
@@ -19,6 +22,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/order" element={<OrderFood />} />
+              <Route path="/book" element={<BookTable />} />
             </Routes>
           </div>
           <Toaster position="top-center" />

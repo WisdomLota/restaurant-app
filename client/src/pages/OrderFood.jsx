@@ -13,7 +13,7 @@ function OrderFood() {
     useEffect(() => {
         const fetchMenu = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/menu');
+                const response = await axios.get('http://localhost:3000/api/menu');
                 setMenuItems(response.data);
             } catch (error) {
                 toast.error('Failed to load menu');
@@ -46,7 +46,7 @@ function OrderFood() {
 
     const handleCheckout = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/orders', {
+            const response = await axios.post('http://localhost:3000/api/orders', {
                 items: cart,
                 total: getTotal(),
                 userId: user.id
