@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/AdminDashboard';
 import OrderFood from './pages/OrderFood';
 import BookTable from './pages/BookTable';
+import BookingConfirmed from './pages/BookingConfirmed';
 import { AuthProvider } from './context/AuthContext';
 import "./styles/index.css"
 
@@ -23,7 +24,8 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/order" element={<OrderFood />} />
-              <Route path="/book" element={<BookTable />} />
+              <Route path="/bookings" element={<BookTable />} />
+              <Route path="/confirmed-booking" element={<BookingConfirmed />} />
             </Routes>
           </div>
           <Toaster position="top-center" />

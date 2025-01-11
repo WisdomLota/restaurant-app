@@ -4,7 +4,7 @@ const Booking = require('../models/Booking');
 const auth = require('../middleware/auth');
 
 // Create a new booking
-router.post('/', auth, async (req, res) => {
+router.post('/bookings', async (req, res) => {
     try {
         const { date, time, guests, userId } = req.body;
         
@@ -29,6 +29,7 @@ router.post('/', auth, async (req, res) => {
         await booking.save();
         res.status(201).json(booking);
     } catch (error) {
+        console.error('Error creating booking:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });

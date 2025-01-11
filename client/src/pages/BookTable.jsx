@@ -21,13 +21,14 @@ function BookTable() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3000/api/bookings', {
+            const response = await axios.post('http://localhost:3000/api/auth/bookings', {
                 ...booking,
-                userId: user.id
+                
             });
             toast.success('Table booked successfully!');
-            navigate('/my-bookings');
+            navigate('/confirmed-booking');
         } catch (error) {
+            console.error('Error occured', error);
             toast.error(error.response?.data?.message || 'Booking failed');
         }
     };

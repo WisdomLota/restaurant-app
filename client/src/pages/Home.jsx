@@ -23,7 +23,7 @@ function Home() {
         navigate('/order');
         break;
       case 'book':
-        navigate('/book');
+        navigate('/bookings');
         break;
       case 'orders':
         navigate('/my-orders');
@@ -72,12 +72,12 @@ function Home() {
           >
             Book a Table
           </button>
-          <button
+          {/* <button
             onClick={() => handleAction('orders')}
             className="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-90"
           >
             My Orders
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
