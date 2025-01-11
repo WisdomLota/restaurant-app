@@ -23,3 +23,5 @@ router.post('/create-payment-intent', async (req, res) => {
         res.status(500).json({ message: 'Payment creation failed' });
     }
 });
+
+module.exports = router;

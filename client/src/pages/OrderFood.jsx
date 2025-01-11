@@ -46,12 +46,13 @@ function OrderFood() {
 
     const handleCheckout = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/api/orders', {
-                items: cart,
-                total: getTotal(),
-                userId: user.id
-            });
-            navigate(`/checkout/${response.data.orderId}`);
+            // const response = await axios.post('http://localhost:3000/api/create-payment-intent', {
+            //     items: cart,
+            //     total: getTotal(),
+            //     userId: user.id
+            // });
+            // navigate(`/checkout/${response.data.orderId}`); haven't implemented payment
+            navigate('/confirmed-order');
         } catch (error) {
             toast.error('Failed to create order');
         }
