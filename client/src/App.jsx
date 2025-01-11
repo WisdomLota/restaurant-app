@@ -8,6 +8,7 @@ import Dashboard from './pages/AdminDashboard';
 import OrderFood from './pages/OrderFood';
 import BookTable from './pages/BookTable';
 import BookingConfirmed from './pages/BookingConfirmed';
+import Checkout from './pages/Checkout';
 import { AuthProvider } from './context/AuthContext';
 import "./styles/index.css"
 
@@ -26,6 +27,7 @@ function App() {
               <Route path="/order" element={<OrderFood />} />
               <Route path="/bookings" element={<BookTable />} />
               <Route path="/confirmed-booking" element={<BookingConfirmed />} />
+              <Route path="/checkout" element={<Checkout />} />
             </Routes>
           </div>
           <Toaster position="top-center" />

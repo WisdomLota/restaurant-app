@@ -4,7 +4,7 @@ const Booking = require('../models/Booking');
 const auth = require('../middleware/auth');
 
 // Create a new booking
-router.post('/bookings', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { date, time, guests, userId } = req.body;
         
@@ -12,10 +12,10 @@ router.post('/bookings', async (req, res) => {
         const existingBookings = await Booking.countDocuments({
             date,
             time,
-            status: { $ne: 'cancelled' }
+            status: { $ne: 'pending' }
         });
 
-        if (existingBookings >= 10) { // Assuming max 10 tables per time slot
+        if (existingBookings >= 2) { // Assuming max 10 tables per time slot
             return res.status(400).json({ message: 'No available tables for this time' });
         }
 

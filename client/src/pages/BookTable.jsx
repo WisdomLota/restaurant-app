@@ -21,7 +21,7 @@ function BookTable() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3000/api/auth/bookings', {
+            const response = await axios.post('http://localhost:3000/api/bookings', {
                 ...booking,
                 
             });

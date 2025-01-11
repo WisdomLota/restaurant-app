@@ -10,7 +10,7 @@ function AdminDashboard() {
     const { user } = useAuth();
 
     useEffect(() => {
-        if (!user?.isAdmin) {
+        if (user?.isAdmin) {
             toast.error('Unauthorized access');
             return;
         }
@@ -19,8 +19,8 @@ function AdminDashboard() {
 
     const fetchData = async () => {
         try {
-            const ordersRes = await axios.get('http://localhost:5000/api/orders/all');
-            const bookingsRes = await axios.get('http://localhost:5000/api/bookings/all');
+            const ordersRes = await axios.get('http://localhost:3000/api/orders/all');
+            const bookingsRes = await axios.get('http://localhost:3000/api/bookings/all');
             setOrders(ordersRes.data);
             setBookings(bookingsRes.data);
         } catch (error) {
@@ -30,7 +30,7 @@ function AdminDashboard() {
 
     const updateOrderStatus = async (orderId, status) => {
         try {
-            await axios.patch(`http://localhost:5000/api/orders/${orderId}`, { status });
+            await axios.patch(`http://localhost:3000/api/orders/${orderId}`, { status });
             fetchData();
             toast.success('Order status updated');
         } catch (error) {
@@ -40,7 +40,7 @@ function AdminDashboard() {
 
     const updateBookingStatus = async (bookingId, status) => {
         try {
-            await axios.patch(`http://localhost:5000/api/bookings/${bookingId}`, { status });
+            await axios.patch(`http://localhost:3000/api/bookings/${bookingId}`, { status });
             fetchData();
             toast.success('Booking status updated');
         } catch (error) {

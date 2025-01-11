@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const bookingsRoutes = require('./routes/bookings');
+const menuRoutes = require('./routes/menu');
 
 const app = express();
 
@@ -11,7 +12,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
-app.use('/api/auth', bookingsRoutes);
+app.use('/api/bookings', bookingsRoutes);
+app.use('/api/menu', menuRoutes);
 
 // Connect to MongoDB
 connectDB();
