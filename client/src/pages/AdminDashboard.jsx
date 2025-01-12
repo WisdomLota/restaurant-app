@@ -87,6 +87,46 @@ function AdminDashboard() {
             toast.error('Failed to update booking');
         }
     };
+
+    const deleteOrder = async (orderId) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error('Authentication required. Please log in.');
+                return;
+            }
+    
+            const headers = { Authorization: `Bearer ${token}` };
+    
+            await axios.delete(`http://localhost:3000/api/orders/${orderId}`, { headers });
+            toast.success('Order deleted successfully');
+            fetchData(); // Refresh the list
+        } catch (error) {
+            console.error('Failed to delete order:', error);
+            toast.error('Failed to delete order');
+        }
+    };
+
+    const deleteBooking = async (bookingId) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error('Authentication required. Please log in.');
+                return;
+            }
+    
+            const headers = { Authorization: `Bearer ${token}` };
+    
+            await axios.delete(`http://localhost:3000/api/bookings/${bookingId}`, { headers });
+            toast.success('Booking deleted successfully');
+            fetchData(); // Refresh the list
+        } catch (error) {
+            console.error('Failed to delete booking:', error);
+            toast.error('Failed to delete booking');
+        }
+    };
+    
+    
     
     
     return (
@@ -153,6 +193,15 @@ function AdminDashboard() {
                                             <option value="delivered">Delivered</option>
                                         </select>
                                     </td>
+                                    <td className="px-6 py-4">
+                                        <button
+                                            onClick={() => deleteOrder(order._id)}
+                                            className="bg-red-500 text-white px-2 py-1 rounded-md"
+                                        >
+                                        Delete
+                                        </button>
+                                    </td>
+
                                 </tr>
                             ))}
                         </tbody>
@@ -192,6 +241,15 @@ function AdminDashboard() {
                                             <option value="cancelled">Cancelled</option>
                                         </select>
                                     </td>
+                                    <td className="px-6 py-4">
+                                        <button
+                                            onClick={() => deleteBooking(booking._id)}
+                                            className="bg-red-500 text-white px-2 py-1 rounded-md"
+                                        >
+                                        Delete
+                                        </button>
+                                    </td>
+
                                 </tr>
                             ))}
                         </tbody>

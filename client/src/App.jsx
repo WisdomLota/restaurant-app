@@ -10,6 +10,7 @@ import BookTable from './pages/BookTable';
 import BookingConfirmed from './pages/BookingConfirmed';
 import OrderConfirmation from './pages/OrderConfirmation';
 import Checkout from './pages/Checkout';
+import MyBotLog from './pages/MyBotLog';
 import { AuthProvider } from './context/AuthContext';
 import "./styles/index.css"
 
@@ -30,6 +31,7 @@ function App() {
               <Route path="/confirmed-booking" element={<BookingConfirmed />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/confirmed-order" element={<OrderConfirmation/>} />
+              <Route path="/my-bot-log" element={<MyBotLog/>} />
             </Routes>
           </div>
           <Toaster position="top-center" />

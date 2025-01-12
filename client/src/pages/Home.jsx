@@ -25,8 +25,8 @@ function Home() {
       case 'book':
         navigate('/bookings');
         break;
-      case 'orders':
-        navigate('/my-orders');
+      case 'botLog':
+        navigate('/my-bot-log');
         break;
       default:
         break;
@@ -73,10 +73,10 @@ function Home() {
             Book a Table
           </button>
           <button
-            onClick={() => handleAction('orders')}
+            onClick={() => handleAction('botLog')}
             className="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-90"
           >
-            My Orders
+            My Bot Log
           </button>
         </div>
       </div>
