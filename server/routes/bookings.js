@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
 });
 
 // Get all bookings (admin only)
-router.get('/all', auth, async (req, res) => {
+router.get('/all', async (req, res) => {
     try {
         const bookings = await Booking.find()
             .populate('user', 'name email')
@@ -59,21 +59,25 @@ router.get('/user/:userId', auth, async (req, res) => {
 
 // Update booking status
 router.patch('/:id', auth, async (req, res) => {
+    if (!req.user.isAdmin) {
+        return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+
     try {
         const { status } = req.body;
-        const booking = await Booking.findByIdAndUpdate(
-            req.params.id,
-            { status },
-            { new: true }
-        );
+        const booking = await Booking.findByIdAndUpdate(req.params.id, { status }, { new: true });
+
         if (!booking) {
             return res.status(404).json({ message: 'Booking not found' });
         }
+
         res.json(booking);
     } catch (error) {
+        console.error('Error updating booking:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 
 // Cancel booking
 router.delete('/:id', auth, async (req, res) => {

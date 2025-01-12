@@ -16,13 +16,21 @@ function Login() {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:3000/api/auth/login', formData);
-            login(response.data);
-            toast.success('Login successful!');
-            navigate('/');
+            const { token } = response.data;
+    
+            if (token) {
+                localStorage.setItem('token', token); // Store the token
+                login(response.data); // Save user data in context
+                toast.success('Login successful!');
+                navigate('/'); // Redirect to dashboard or home
+            } else {
+                toast.error('Failed to retrieve token. Please try again.');
+            }
         } catch (error) {
             toast.error(error.response?.data?.message || 'Login failed');
         }
     };
+    
 
     return (
         <div className="max-w-md mx-auto">

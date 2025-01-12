@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function AdminDashboard() {
     const [activeTab, setActiveTab] = useState('orders');
@@ -9,45 +10,81 @@ function AdminDashboard() {
     const [bookings, setBookings] = useState([]);
     const { user } = useAuth();
 
+    const navigate = useNavigate();
+
     useEffect(() => {
-        if (!user?.isAdmin) {
+        if (user?.isAdmin) { // Restrict access to admins
             toast.error('Unauthorized access');
+            navigate('/'); // Redirect non-admins
             return;
         }
         fetchData();
     }, [user]);
+    
 
     const fetchData = async () => {
         try {
-            const ordersRes = await axios.get('http://localhost:3000/api/orders');
-            const bookingsRes = await axios.get('http://localhost:3000/api/bookings');
+            const token = localStorage.getItem('token'); // Get token from localStorage
+            console.log('Authorization Token:', token);
+            if (!token) {
+                toast.error('Token not found. Please log in again.');
+                return;
+            }
+    
+            const headers = { Authorization: `Bearer ${token}` };
+    
+            const ordersRes = await axios.get('http://localhost:3000/api/orders/all', {headers});
+            const bookingsRes = await axios.get('http://localhost:3000/api/bookings/all', {headers});
+    
             setOrders(ordersRes.data);
             setBookings(bookingsRes.data);
         } catch (error) {
+            console.error('Failed to fetch data:', error);
             toast.error('Failed to fetch data');
         }
-    };
+    };    
+    
 
     const updateOrderStatus = async (orderId, status) => {
         try {
-            await axios.patch(`http://localhost:3000/api/orders/${orderId}`, { status });
-            fetchData();
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error('Authentication required. Please log in.');
+                return;
+            }
+    
+            const headers = { Authorization: `Bearer ${token}` };
+    
+            await axios.patch(`http://localhost:3000/api/orders/${orderId}`, { status }, { headers });
             toast.success('Order status updated');
+            fetchData(); // Refresh the list
         } catch (error) {
+            console.error('Failed to update order:', error);
             toast.error('Failed to update order');
         }
     };
-
+    
+    
     const updateBookingStatus = async (bookingId, status) => {
         try {
-            await axios.patch(`http://localhost:3000/api/bookings/${bookingId}`, { status });
-            fetchData();
+            const token = localStorage.getItem('token'); // Retrieve token
+            if (!token) {
+                toast.error('Authentication required. Please log in.');
+                return;
+            }
+    
+            const headers = { Authorization: `Bearer ${token}` };
+    
+            await axios.patch(`http://localhost:3000/api/bookings/${bookingId}`, { status }, { headers });
             toast.success('Booking status updated');
+            fetchData(); // Refresh data
         } catch (error) {
+            console.error('Failed to update booking:', error);
             toast.error('Failed to update booking');
         }
     };
-
+    
+    
     return (
         <div className="container mx-auto px-4">
             <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
@@ -92,13 +129,13 @@ function AdminDashboard() {
                             {orders.map(order => (
                                 <tr key={order._id} className="border-t">
                                     <td className="px-6 py-4">{order._id}</td>
-                                    <td className="px-6 py-4">{order.user.name}</td>
+                                    <td className="px-6 py-4">{order.user?.name || 'Unknown'}</td>
                                     <td className="px-6 py-4">
                                         {order.items.map(item => (
                                             `${item.name} (${item.quantity})`
                                         )).join(', ')}
                                     </td>
-                                    <td className="px-6 py-4">${order.total}</td>
+                                    <td className="px-6 py-4">${order.total.toFixed(2)}</td>
                                     <td className="px-6 py-4">{order.status}</td>
                                     <td className="px-6 py-4">
                                         <select
@@ -135,7 +172,7 @@ function AdminDashboard() {
                             {bookings.map(booking => (
                                 <tr key={booking._id} className="border-t">
                                     <td className="px-6 py-4">{booking._id}</td>
-                                    <td className="px-6 py-4">{booking.user.name}</td>
+                                    <td className="px-6 py-4">{booking.user?.name || 'Unknown'}</td>
                                     <td className="px-6 py-4">{new Date(booking.date).toLocaleDateString()}</td>
                                     <td className="px-6 py-4">{booking.time}</td>
                                     <td className="px-6 py-4">{booking.guests}</td>
@@ -154,6 +191,7 @@ function AdminDashboard() {
                                 </tr>
                             ))}
                         </tbody>
+
                     </table>
                 </div>
             )}
