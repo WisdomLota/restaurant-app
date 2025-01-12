@@ -6,7 +6,7 @@ const authRoutes = require('./routes/auth');
 const bookingsRoutes = require('./routes/bookings');
 const menuRoutes = require('./routes/menu');
 const orderRoutes = require('./routes/orders');
-
+const path = require('path');
 const app = express();
 
 // Middleware
@@ -19,6 +19,9 @@ app.use('/api/orders', orderRoutes);
 
 // Connect to MongoDB
 connectDB();
+
+// Serve static files from the 'public' directory
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 // Basic route
 app.get('/', (req, res) => {

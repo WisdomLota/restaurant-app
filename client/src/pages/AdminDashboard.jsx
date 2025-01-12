@@ -14,7 +14,6 @@ function AdminDashboard() {
 
     useEffect(() => {
         if (!user || user.isAdmin == true) { // Explicit check for isAdmin
-            toast.error('Unauthorized access');
             navigate('/'); // Redirect non-admins
             return;
         }
@@ -30,22 +29,26 @@ function AdminDashboard() {
             console.log('Authorization Token:', token);
             if (!token) {
                 toast.error('Token not found. Please log in again.');
+                navigate('/login'); // Redirect to login
                 return;
             }
     
             const headers = { Authorization: `Bearer ${token}` };
     
-            const ordersRes = await axios.get('http://localhost:3000/api/orders/all', {headers});
-            const bookingsRes = await axios.get('http://localhost:3000/api/bookings/all', {headers});
+            const ordersRes = await axios.get('http://localhost:3000/api/orders/all', { headers });
+            const bookingsRes = await axios.get('http://localhost:3000/api/bookings/all', { headers });
     
             setOrders(ordersRes.data);
             setBookings(bookingsRes.data);
         } catch (error) {
             console.error('Failed to fetch data', error);
-            navigate('/');
-            toast.error('Failed to fetch data, not permitted:');
+            navigate('/'); // Redirect non-admins
+            // Remove this toast to avoid duplication
+            toast.error('Failed to fetch data, only admins');
         }
-    };    
+    };
+    
+     
     
 
     const updateOrderStatus = async (orderId, status) => {

@@ -12,11 +12,6 @@ function MyBotLog() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (!user) {
-            navigate('/login');
-            return;
-        }
-        
         const fetchUserLogs = async () => {
             try {
                 const token = localStorage.getItem('token');
@@ -26,30 +21,33 @@ function MyBotLog() {
                     return;
                 }
 
+                console.log('User object:', user); // Debug the user object
+                console.log('User ID:', user?.id); // Debug the user ID
+
                 const headers = { Authorization: `Bearer ${token}` };
-    
+
                 const [ordersRes, bookingsRes] = await Promise.all([
-                    axios.get('http://localhost:3000/api/orders/my-orders', { headers }),
-                    axios.get('http://localhost:3000/api/bookings/my-bookings', { headers })
+                    axios.get(`http://localhost:3000/api/orders/user/${user?.id}`, { headers }),
+                    axios.get(`http://localhost:3000/api/bookings/user/${user?.id}`, { headers })
                 ]);
-    
+
                 setOrders(ordersRes.data);
                 setBookings(bookingsRes.data);
+                setIsLoading(false);
             } catch (error) {
-                if (error.response?.status === 401) {
-                    toast.error('Session expired. Please login again');
-                    navigate('/login');
-                } else {
-                    toast.error('Failed to fetch your history');
-                }
                 console.error('Error fetching user logs:', error);
-            } finally {
+                toast.error('Failed to fetch your history');
                 setIsLoading(false);
             }
         };
-    
-        fetchUserLogs();
-    }, [user, navigate]);    
+
+        if (user) {
+            fetchUserLogs();
+        } else {
+            console.log('User is null or undefined'); // Debug log for missing user
+            navigate('/login');
+        }
+    }, [user, navigate]);
 
     if (isLoading) {
         return <div className="flex justify-center items-center min-h-screen">Loading...</div>;

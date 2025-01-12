@@ -80,13 +80,37 @@ router.patch('/:id', auth, async (req, res) => {
 
 router.get('/my-bookings', auth, async (req, res) => {
     try {
-        const bookings = await Booking.find({ user: req.user.id }).sort({ date: -1 });
-        res.status(200).json(bookings);
+        const bookings = await Booking.find({ user: req.user._id })
+            .sort({ date: -1 });
+        res.json(bookings);
     } catch (error) {
         console.error('Error fetching bookings:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+// Get user's bookings (alternative endpoint)
+router.get('/user/:userId', auth, async (req, res) => {
+    try {
+        console.log('Request Params:', req.params); // Debug request parameters
+        console.log('Decoded User ID:', req.user.id); // Debug decoded user ID
+
+        if (!req.params.userId) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        if (req.user.id !== req.params.userId && !req.user.isAdmin) {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        const bookings = await Booking.find({ user: req.params.userId }).sort({ date: -1 });
+        res.json(bookings);
+    } catch (error) {
+        console.error('Error fetching user bookings:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 
 
 // Cancel booking

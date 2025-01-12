@@ -90,13 +90,39 @@ router.get('/user/:userId', auth, async (req, res) => {
 
 router.get('/my-orders', auth, async (req, res) => {
     try {
-        const orders = await Order.find({ user: req.user.id }).sort({ createdAt: -1 });
-        res.status(200).json(orders);
+        const orders = await Order.find({ user: req.user._id })
+            .sort({ createdAt: -1 });
+        res.json(orders);
     } catch (error) {
         console.error('Error fetching orders:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+// Get user's orders (alternative endpoint)
+router.get('/user/:userId', auth, async (req, res) => {
+    try {
+        console.log('Request Params:', req.params); // Debug request parameters
+        console.log('Decoded User ID:', req.user.id); // Debug decoded user ID
+
+        if (!req.params.userId) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        if (req.user.id !== req.params.userId && !req.user.isAdmin) {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        const orders = await Order.find({ user: req.params.userId }).sort({ createdAt: -1 });
+        res.json(orders);
+    } catch (error) {
+        console.error('Error fetching user orders:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+
 
 router.delete('/:id', auth, async (req, res) => {
     try {
