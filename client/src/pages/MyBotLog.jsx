@@ -11,30 +11,36 @@ function MyBotLog() {
     const [bookings, setBookings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    // In MyBotLog.jsx
     useEffect(() => {
         const fetchUserLogs = async () => {
             try {
                 const token = localStorage.getItem('token');
-                if (!token) {
+                if (!token || !user) {
                     toast.error('Please login to view your history');
                     navigate('/login');
                     return;
                 }
-    
-                if (!user) {
-                    navigate('/login');
-                    return;
-                }
-    
+            
                 const headers = { Authorization: `Bearer ${token}` };
-    
+            
+                // Make sure these endpoints exist in your backend
                 const [ordersRes, bookingsRes] = await Promise.all([
                     axios.get(`http://localhost:3000/api/orders/my-orders`, { headers }),
                     axios.get(`http://localhost:3000/api/bookings/my-bookings`, { headers })
                 ]);
-    
-                setOrders(ordersRes.data);
-                setBookings(bookingsRes.data);
+            
+                // Sort orders and bookings by date, most recent first
+                const sortedOrders = ordersRes.data.sort((a, b) => 
+                    new Date(b.createdAt) - new Date(a.createdAt)
+                ).slice(0, 10); // Get only the 10 most recent orders
+            
+                const sortedBookings = bookingsRes.data.sort((a, b) => 
+                    new Date(b.date) - new Date(a.date)
+                ).slice(0, 10); // Get only the 10 most recent bookings
+            
+                setOrders(sortedOrders);
+                setBookings(sortedBookings);
                 setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching user logs:', error);

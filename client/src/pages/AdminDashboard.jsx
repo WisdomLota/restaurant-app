@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -8,53 +8,54 @@ function AdminDashboard() {
     const [activeTab, setActiveTab] = useState('orders');
     const [orders, setOrders] = useState([]);
     const [bookings, setBookings] = useState([]);
-    const [showedError, setShowedError] = useState(false);
+    const toastShown = useRef(false); // Ref to prevent duplicate toasts
     const { user } = useAuth();
 
     const navigate = useNavigate();
 
     // In AdminDashboard.jsx, modify the useEffect:
     useEffect(() => {
-        if (!user || !user.isAdmin) {
-            toast.error('Unauthorized access, only admins allowed');
+        if (!user || user.isAdmin == true ) {
+            if (!toastShown.current) {
+                // toast.error('Unauthorized access, only admins allowed');
+                toastShown.current = true; // Mark toast as shown
+            }
             navigate('/login');
             return;
         }
-    
         fetchData();
-    }, [user, navigate]); // Remove showedError from dependencies
+    }, [user, navigate]);
 
     const fetchData = async () => {
         try {
-            const token = localStorage.getItem('token'); // Get token from localStorage
-            console.log('Authorization Token:', token);
-
+            const token = localStorage.getItem('token');
             if (!token) {
-                if (!showedError) {
+                if (!toastShown.current) {
                     toast.error('Token not found. Please log in again.');
-                    setShowedError(true); // Prevent duplicate toasts
+                    toastShown.current = true; // Mark toast as shown
                 }
-                navigate('/login'); // Redirect to login
+                navigate('/login');
                 return;
             }
 
             const headers = { Authorization: `Bearer ${token}` };
 
-            const ordersRes = await axios.get('http://localhost:3000/api/orders/all', { headers });
-            const bookingsRes = await axios.get('http://localhost:3000/api/bookings/all', { headers });
+            const [ordersRes, bookingsRes] = await Promise.all([
+                axios.get('http://localhost:3000/api/orders/all', { headers }),
+                axios.get('http://localhost:3000/api/bookings/all', { headers })
+            ]);
 
             setOrders(ordersRes.data);
             setBookings(bookingsRes.data);
         } catch (error) {
             console.error('Failed to fetch data:', error);
-            if (!showedError) {
-                toast.error('Failed to fetch data, only admins');
-                setShowedError(true); // Prevent duplicate toasts
+            if (!toastShown.current) {
+                toast.error('Failed to fetch data. Admin access required.');
+                toastShown.current = true; // Mark toast as shown
             }
-            navigate('/'); // Redirect non-admins
+            navigate('/');
         }
     };
-    
 
     const updateOrderStatus = async (orderId, status) => {
         try {

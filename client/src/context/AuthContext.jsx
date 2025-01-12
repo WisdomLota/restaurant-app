@@ -5,17 +5,29 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  // Restore user from localStorage on initial load
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser)); // Restore user from localStorage
-    }
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+          try {
+              const parsedUser = JSON.parse(storedUser);
+              // Ensure isAdmin is properly converted to boolean
+              parsedUser.isAdmin = Boolean(parsedUser.isAdmin);
+              setUser(parsedUser);
+          } catch (error) {
+              console.error('Error parsing stored user:', error);
+              localStorage.removeItem('user');
+          }
+      }
   }, []);
 
   const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData)); // Save user to localStorage
+      // Ensure isAdmin is properly set as boolean
+      const userWithBooleanAdmin = {
+          ...userData,
+          isAdmin: Boolean(userData.isAdmin)
+      };
+      setUser(userWithBooleanAdmin);
+      localStorage.setItem('user', JSON.stringify(userWithBooleanAdmin));
   };
 
   const logout = () => {

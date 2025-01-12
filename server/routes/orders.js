@@ -88,10 +88,12 @@ router.get('/user/:userId', auth, async (req, res) => {
     }
 });
 
+// In orders.js backend route
 router.get('/my-orders', auth, async (req, res) => {
     try {
         const orders = await Order.find({ user: req.user._id })
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .limit(10); // Limit to 10 most recent orders
         res.json(orders);
     } catch (error) {
         console.error('Error fetching orders:', error);
