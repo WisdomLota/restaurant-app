@@ -46,6 +46,29 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.post('/create', auth, async (req, res) => {
+    try {
+        const { items, total } = req.body;
+
+        console.log('Authenticated User ID:', req.user.id); // Log user ID from the auth middleware
+
+        const newOrder = new Order({
+            user: req.user.id, // Assign logged-in user's ID
+            items,
+            total,
+            status: 'pending', // Default status
+            createdAt: new Date()
+        });
+
+        await newOrder.save();
+        res.status(201).json({ message: 'Order created successfully', order: newOrder });
+    } catch (error) {
+        console.error('Error creating order:', error);
+        res.status(500).json({ message: 'Failed to create order' });
+    }
+});
+
+
 // Get all orders (admin only)
 router.get('/all', auth, isAdmin, async (req, res) => {
     try {
@@ -88,18 +111,19 @@ router.get('/user/:userId', auth, async (req, res) => {
     }
 });
 
-// In orders.js backend route
 router.get('/my-orders', auth, async (req, res) => {
     try {
-        const orders = await Order.find({ user: req.user._id })
-            .sort({ createdAt: -1 })
-            .limit(10); // Limit to 10 most recent orders
-        res.json(orders);
+        console.log('Authenticated User ID:', req.user.id); // Ensure this logs the correct user ID
+        const orders = await Order.find({ user: req.user.id }).sort({ createdAt: -1 });
+
+        console.log('Fetched Orders:', orders); // Log the orders fetched
+        res.status(200).json(orders);
     } catch (error) {
-        console.error('Error fetching orders:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error fetching user orders:', error);
+        res.status(500).json({ message: 'Failed to fetch user orders' });
     }
 });
+
 
 // Get user's orders (alternative endpoint)
 router.get('/user/:userId', auth, async (req, res) => {

@@ -21,34 +21,27 @@ function MyBotLog() {
                     navigate('/login');
                     return;
                 }
-            
+        
                 const headers = { Authorization: `Bearer ${token}` };
-            
-                // Make sure these endpoints exist in your backend
+        
                 const [ordersRes, bookingsRes] = await Promise.all([
                     axios.get(`http://localhost:3000/api/orders/my-orders`, { headers }),
                     axios.get(`http://localhost:3000/api/bookings/my-bookings`, { headers })
                 ]);
-            
-                // Sort orders and bookings by date, most recent first
-                const sortedOrders = ordersRes.data.sort((a, b) => 
-                    new Date(b.createdAt) - new Date(a.createdAt)
-                ).slice(0, 10); // Get only the 10 most recent orders
-            
-                const sortedBookings = bookingsRes.data.sort((a, b) => 
-                    new Date(b.date) - new Date(a.date)
-                ).slice(0, 10); // Get only the 10 most recent bookings
-            
-                setOrders(sortedOrders);
-                setBookings(sortedBookings);
+        
+                console.log('Orders Response:', ordersRes.data); // Log the orders response
+                console.log('Bookings Response:', bookingsRes.data); // Log the bookings response
+        
+                setOrders(ordersRes.data);
+                setBookings(bookingsRes.data);
                 setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching user logs:', error);
                 toast.error('Failed to fetch your history');
                 setIsLoading(false);
             }
-        };
-    
+        };        
+
         if (user) {
             fetchUserLogs();
         }

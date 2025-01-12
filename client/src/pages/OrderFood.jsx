@@ -78,6 +78,37 @@ function OrderFood() {
             toast.error('Failed to place order');
         }
     };
+
+    const handleCreateOrder = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const headers = { Authorization: `Bearer ${token}` };
+    
+            const orderData = {
+                items: cart.map((item) => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                total: getTotal()
+            };
+    
+            const response = await axios.post(
+                'http://localhost:3000/api/orders/create',
+                orderData,
+                { headers }
+            );
+    
+            console.log('Order Created:', response.data);
+            toast.success('Order created successfully!');
+            navigate('/confirmed-order');
+        } catch (error) {
+            console.error('Error creating order:', error);
+            toast.error('Failed to create order');
+        }
+    };
+    
+    
     
     
 
@@ -143,7 +174,7 @@ function OrderFood() {
                                     <span>${getTotal().toFixed(2)}</span>
                                 </div>
                                 <button
-                                    onClick={handleCheckout}
+                                    onClick={handleCreateOrder}
                                     className="w-full bg-primary text-white py-2 rounded-md mt-4"
                                 >
                                     Proceed to Checkout
