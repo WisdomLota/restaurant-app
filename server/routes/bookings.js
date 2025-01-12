@@ -89,7 +89,6 @@ router.get('/my-bookings', auth, async (req, res) => {
 });
 
 
-
 // Cancel booking
 router.delete('/:id', auth, async (req, res) => {
     try {

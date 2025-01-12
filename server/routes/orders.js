@@ -98,7 +98,6 @@ router.get('/my-orders', auth, async (req, res) => {
     }
 });
 
-
 router.delete('/:id', auth, async (req, res) => {
     try {
         if (!req.user.isAdmin) {
