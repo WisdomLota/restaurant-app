@@ -72,12 +72,12 @@ function Home() {
           >
             Book a Table
           </button>
-          {/* <button
+          <button
             onClick={() => handleAction('botLog')}
             className="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-90"
           >
             My Bot Log
-          </button> */}
+          </button>
         </div>
       </div>
     </div>

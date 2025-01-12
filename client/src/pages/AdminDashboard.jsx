@@ -8,47 +8,52 @@ function AdminDashboard() {
     const [activeTab, setActiveTab] = useState('orders');
     const [orders, setOrders] = useState([]);
     const [bookings, setBookings] = useState([]);
+    const [showedError, setShowedError] = useState(false);
     const { user } = useAuth();
 
     const navigate = useNavigate();
 
+    // In AdminDashboard.jsx, modify the useEffect:
     useEffect(() => {
-        if (!user || user.isAdmin == true) { // Explicit check for isAdmin
-            navigate('/'); // Redirect non-admins
+        if (!user || !user.isAdmin) {
+            toast.error('Unauthorized access, only admins allowed');
+            navigate('/login');
             return;
         }
+    
         fetchData();
-    }, [user]);
-    
-    
-    
+    }, [user, navigate]); // Remove showedError from dependencies
 
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('token'); // Get token from localStorage
             console.log('Authorization Token:', token);
+
             if (!token) {
-                toast.error('Token not found. Please log in again.');
+                if (!showedError) {
+                    toast.error('Token not found. Please log in again.');
+                    setShowedError(true); // Prevent duplicate toasts
+                }
                 navigate('/login'); // Redirect to login
                 return;
             }
-    
+
             const headers = { Authorization: `Bearer ${token}` };
-    
+
             const ordersRes = await axios.get('http://localhost:3000/api/orders/all', { headers });
             const bookingsRes = await axios.get('http://localhost:3000/api/bookings/all', { headers });
-    
+
             setOrders(ordersRes.data);
             setBookings(bookingsRes.data);
         } catch (error) {
-            console.error('Failed to fetch data', error);
+            console.error('Failed to fetch data:', error);
+            if (!showedError) {
+                toast.error('Failed to fetch data, only admins');
+                setShowedError(true); // Prevent duplicate toasts
+            }
             navigate('/'); // Redirect non-admins
-            // Remove this toast to avoid duplication
-            toast.error('Failed to fetch data, only admins');
         }
     };
-    
-     
     
 
     const updateOrderStatus = async (orderId, status) => {
