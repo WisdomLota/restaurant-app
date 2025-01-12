@@ -2,11 +2,19 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 const auth = require('../middleware/auth');
-
-// Create a new order
 const mongoose = require('mongoose');
 
-router.post('/', async (req, res) => {
+// Middleware to check if user is admin
+const isAdmin = (req, res, next) => {
+    if (req.user && req.user.isAdmin) {
+        next();
+    } else {
+        res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+};
+
+// Create a new order
+router.post('/', auth, async (req, res) => {
     const { items, total, userId } = req.body;
 
     // Validate input
@@ -38,15 +46,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-
-
-
 // Get all orders (admin only)
-router.get('/all', async (req, res) => {
-    // if (!req.user.isAdmin) {
-    //     return res.status(403).json({ message: 'Access denied. Admins only.' });
-    // }
-
+router.get('/all', auth, isAdmin, async (req, res) => {
     try {
         const orders = await Order.find()
             .populate('user', 'name email')
@@ -58,14 +59,10 @@ router.get('/all', async (req, res) => {
     }
 });
 
-router.patch('/:id', auth, async (req, res) => {
-    if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(400).json({ message: 'Invalid order ID format' });
-    }
-
+// Update order status (admin only)
+router.patch('/:id', auth, isAdmin, async (req, res) => {
     try {
         const { status } = req.body;
-
         const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
 
         if (!order) {
@@ -78,9 +75,6 @@ router.patch('/:id', auth, async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
-
-
-
 
 // Get orders by user
 router.get('/user/:userId', auth, async (req, res) => {

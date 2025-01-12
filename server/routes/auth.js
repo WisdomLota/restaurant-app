@@ -51,13 +51,19 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            { id: user._id, isAdmin: user.isAdmin }, // Ensure `isAdmin` is included
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
         res.status(200).json({ token });
     } catch (error) {
         console.error('Error logging in:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 
 
 module.exports = router;

@@ -65,6 +65,7 @@ function AdminDashboard() {
     };
     
     
+    
     const updateBookingStatus = async (bookingId, status) => {
         try {
             const token = localStorage.getItem('token'); // Retrieve token
