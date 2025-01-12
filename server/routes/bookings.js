@@ -4,26 +4,27 @@ const Booking = require('../models/Booking');
 const auth = require('../middleware/auth');
 
 // Create a new booking
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     try {
-        const { date, time, guests, userId } = req.body;
-        
-        // Check if there's availability
+        const { date, time, guests } = req.body;
+
+        // Check for availability
         const existingBookings = await Booking.countDocuments({
             date,
             time,
-            status: { $ne: 'pending' }
+            status: { $ne: 'cancelled' } // Consider only active bookings
         });
 
-        if (existingBookings >= 2) { // Assuming max 10 tables per time slot
+        if (existingBookings >= 10) { // Assume 10 tables are available per time slot
             return res.status(400).json({ message: 'No available tables for this time' });
         }
 
         const booking = new Booking({
-            user: userId,
+            user: req.user.id, // Associate the booking with the logged-in user
             date,
             time,
-            guests
+            guests,
+            status: 'confirmed'
         });
 
         await booking.save();
@@ -33,6 +34,7 @@ router.post('/', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 
 // Get all bookings (admin only)
 router.get('/all', async (req, res) => {
@@ -80,14 +82,17 @@ router.patch('/:id', auth, async (req, res) => {
 
 router.get('/my-bookings', auth, async (req, res) => {
     try {
-        const bookings = await Booking.find({ user: req.user._id })
-            .sort({ date: -1 });
+        console.log('Authenticated User ID:', req.user.id); // Debug the logged-in user ID
+        const bookings = await Booking.find({ user: req.user.id })
+            .sort({ date: -1 }); // Fetch bookings for the logged-in user
+        console.log('Fetched Bookings:', bookings); // Debug fetched bookings
         res.json(bookings);
     } catch (error) {
         console.error('Error fetching bookings:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 
 // Get user's bookings (alternative endpoint)
 router.get('/user/:userId', auth, async (req, res) => {

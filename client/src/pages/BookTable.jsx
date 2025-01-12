@@ -21,17 +21,23 @@ function BookTable() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3000/api/bookings', {
-                ...booking,
-                
-            });
+            const token = localStorage.getItem('token'); // Fetch the token for authorization
+            const headers = { Authorization: `Bearer ${token}` };
+    
+            const response = await axios.post(
+                'http://localhost:3000/api/bookings',
+                booking,
+                { headers }
+            );
+    
             toast.success('Table booked successfully!');
             navigate('/confirmed-booking');
         } catch (error) {
-            console.error('Error occured', error);
+            console.error('Error creating booking:', error);
             toast.error(error.response?.data?.message || 'Booking failed');
         }
     };
+    
 
     return (
         <div className="max-w-md mx-auto">

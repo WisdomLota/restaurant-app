@@ -44,41 +44,6 @@ function OrderFood() {
         return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     };
 
-    // const handleCheckout = async () => {
-    //     try {
-    //         const response = await axios.post('http://localhost:3000/api/orders', {
-    //             items: cart,
-    //             total: getTotal(),
-    //             userId: user.id
-    //         });
-    //         // navigate(`/checkout/${response.data.orderId}`); haven't implemented payment
-    //         navigate('/confirmed-order');
-    //     } catch (error) {
-    //         toast.error('Failed to create order');
-    //     }
-    // };
-    const handleCheckout = async () => {
-        try {
-            const payload = {
-                items: cart.map(item => ({
-                    name: item.name,
-                    quantity: item.quantity,
-                    price: item.price,
-                })),
-                total: getTotal(),
-                userId: user?.id || '63c1234567890abc12345678' // Replace with a valid ObjectId from your database
-            };
-    
-            console.log('Checkout payload:', payload); // Debug log
-            const response = await axios.post('http://localhost:3000/api/orders', payload);
-            toast.success('Order placed successfully!');
-            navigate('/confirmed-order');
-        } catch (error) {
-            console.error('Failed to create order:', error);
-            toast.error('Failed to place order');
-        }
-    };
-
     const handleCreateOrder = async () => {
         try {
             const token = localStorage.getItem('token');

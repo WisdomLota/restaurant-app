@@ -11,7 +11,6 @@ function MyBotLog() {
     const [bookings, setBookings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // In MyBotLog.jsx
     useEffect(() => {
         const fetchUserLogs = async () => {
             try {
@@ -26,11 +25,11 @@ function MyBotLog() {
         
                 const [ordersRes, bookingsRes] = await Promise.all([
                     axios.get(`http://localhost:3000/api/orders/my-orders`, { headers }),
-                    axios.get(`http://localhost:3000/api/bookings/my-bookings`, { headers })
+                    axios.get(`http://localhost:3000/api/bookings/my-bookings`, { headers }) // Ensure this works
                 ]);
         
-                console.log('Orders Response:', ordersRes.data); // Log the orders response
-                console.log('Bookings Response:', bookingsRes.data); // Log the bookings response
+                console.log('Orders Response:', ordersRes.data); // Log orders response
+                console.log('Bookings Response:', bookingsRes.data); // Log bookings response
         
                 setOrders(ordersRes.data);
                 setBookings(bookingsRes.data);
@@ -41,11 +40,11 @@ function MyBotLog() {
                 setIsLoading(false);
             }
         };        
-
         if (user) {
             fetchUserLogs();
         }
     }, [user, navigate]);
+    
 
     if (isLoading) {
         return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
@@ -114,6 +113,8 @@ function MyBotLog() {
                     </div>
                 )}
             </div>
+
+
         </div>
     );
 }
