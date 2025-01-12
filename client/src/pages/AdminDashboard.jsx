@@ -13,13 +13,15 @@ function AdminDashboard() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user?.isAdmin) { // Restrict access to admins
+        if (!user || user.isAdmin == true) { // Explicit check for isAdmin
             toast.error('Unauthorized access');
             navigate('/'); // Redirect non-admins
             return;
         }
         fetchData();
     }, [user]);
+    
+    
     
 
     const fetchData = async () => {
@@ -39,8 +41,9 @@ function AdminDashboard() {
             setOrders(ordersRes.data);
             setBookings(bookingsRes.data);
         } catch (error) {
-            console.error('Failed to fetch data:', error);
-            toast.error('Failed to fetch data');
+            console.error('Failed to fetch data', error);
+            navigate('/');
+            toast.error('Failed to fetch data, not permitted:');
         }
     };    
     

@@ -14,7 +14,7 @@ const isAdmin = (req, res, next) => {
 };
 
 // Create a new order
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
     const { items, total, userId } = req.body;
 
     // Validate input
